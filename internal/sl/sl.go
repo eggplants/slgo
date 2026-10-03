@@ -18,15 +18,26 @@ type Options struct {
 	Logo     bool // -l: draw the small SL logo train
 	C51      bool // -c: draw C51 instead of D51
 	Patch    bool // -p: sl5-1.patch mode (level crossing, coaches, round trip)
+	Help     bool // -h, --help: print usage and exit
+	Version  bool // -v, --version: print version and exit
 }
 
 // ParseArgs interprets command line arguments the same way as sl.c:
 // every argument starting with '-' is scanned for option letters,
 // unknown letters and other arguments are ignored.
-// -p cannot be combined with -a, -F, -l or -c.
+// --help and --version are also accepted as long forms of -h and -v.
+// -p cannot be combined with -a, -F, -l or -c unless -h or -v is given.
 func ParseArgs(args []string) (Options, error) {
 	var o Options
 	for _, arg := range args {
+		switch arg {
+		case "--help":
+			o.Help = true
+			continue
+		case "--version":
+			o.Version = true
+			continue
+		}
 		if len(arg) == 0 || arg[0] != '-' {
 			continue
 		}
@@ -42,10 +53,14 @@ func ParseArgs(args []string) (Options, error) {
 				o.C51 = true
 			case 'p':
 				o.Patch = true
+			case 'h':
+				o.Help = true
+			case 'v':
+				o.Version = true
 			}
 		}
 	}
-	if o.Patch && (o.Accident || o.Fly || o.Logo || o.C51) {
+	if !o.Help && !o.Version && o.Patch && (o.Accident || o.Fly || o.Logo || o.C51) {
 		return Options{}, errors.New("-p cannot be combined with -a, -F, -l or -c")
 	}
 	return o, nil

@@ -27,6 +27,8 @@ go install github.com/eggplants/slgo/cmd/sl@latest
 ```sh
 sl [-a] [-F] [-l] [-c]
 sl -p
+sl -h | --help
+sl -v | --version
 ```
 
 | Option | Effect                       |
@@ -36,6 +38,8 @@ sl -p
 | `-l`   | Show a small train (SL logo) |
 | `-c`   | Show C51 instead of D51      |
 | `-p`   | [sl5-1.patch](https://www.izumix.xyz/sl/sl5-1.patch) mode (cannot be combined with other options) |
+| `-h`, `--help` | Show help and exit |
+| `-v`, `--version` | Show version and exit |
 
 ## License
 

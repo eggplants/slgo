@@ -41,6 +41,13 @@ func TestParseArgs(t *testing.T) {
 		{[]string{"--c"}, Options{C51: true}},
 		{[]string{"-p"}, Options{Patch: true}},
 		{[]string{"-pp", "x"}, Options{Patch: true}},
+		{[]string{"-h"}, Options{Help: true}},
+		{[]string{"--help"}, Options{Help: true}},
+		{[]string{"-v"}, Options{Version: true}},
+		{[]string{"--version"}, Options{Version: true}},
+		{[]string{"-av"}, Options{Accident: true, Version: true}},
+		{[]string{"-pa", "--help"}, Options{Patch: true, Accident: true, Help: true}},
+		{[]string{"-pFv"}, Options{Patch: true, Fly: true, Version: true}},
 	}
 	for _, tt := range tests {
 		got, err := ParseArgs(tt.args)

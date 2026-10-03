@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -14,6 +15,32 @@ import (
 )
 
 const frameInterval = 40 * time.Millisecond
+
+// version is set by GoReleaser via -ldflags "-X main.version=...".
+var version = ""
+
+const usage = `Usage: sl [-a] [-F] [-l] [-c]
+       sl -p
+
+Options:
+  -a             An accident occurs
+  -F             The train flies
+  -l             Show a small train (SL logo)
+  -c             Show C51 instead of D51
+  -p             sl5-1.patch mode (cannot be combined with other options)
+  -h, --help     Show this help and exit
+  -v, --version  Show version and exit
+`
+
+func getVersion() string {
+	if version != "" {
+		return version
+	}
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		return info.Main.Version
+	}
+	return "dev"
+}
 
 type tcellScreen struct{ s tcell.Screen }
 
@@ -34,6 +61,14 @@ func run(args []string) error {
 	opts, err := sl.ParseArgs(args)
 	if err != nil {
 		return err
+	}
+	switch {
+	case opts.Help:
+		fmt.Print(usage)
+		return nil
+	case opts.Version:
+		fmt.Println("sl", getVersion())
+		return nil
 	}
 
 	s, err := tcell.NewScreen()
