@@ -2,6 +2,8 @@
 // (SL version 5.03, Copyright 1993,1998,2014-2015 Toyoda Masashi).
 package sl
 
+import "errors"
+
 // Screen is the drawing surface the animation is rendered onto.
 // Cells that are not overwritten must keep their previous contents.
 type Screen interface {
@@ -21,7 +23,8 @@ type Options struct {
 // ParseArgs interprets command line arguments the same way as sl.c:
 // every argument starting with '-' is scanned for option letters,
 // unknown letters and other arguments are ignored.
-func ParseArgs(args []string) Options {
+// -p cannot be combined with -a, -F, -l or -c.
+func ParseArgs(args []string) (Options, error) {
 	var o Options
 	for _, arg := range args {
 		if len(arg) == 0 || arg[0] != '-' {
@@ -42,7 +45,10 @@ func ParseArgs(args []string) Options {
 			}
 		}
 	}
-	return o
+	if o.Patch && (o.Accident || o.Fly || o.Logo || o.C51) {
+		return Options{}, errors.New("-p cannot be combined with -a, -F, -l or -c")
+	}
+	return o, nil
 }
 
 // canvas provides the curses-like drawing primitives of sl.c.

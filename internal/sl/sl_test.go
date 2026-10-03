@@ -40,10 +40,28 @@ func TestParseArgs(t *testing.T) {
 		{[]string{"-F", "l", "-x", ""}, Options{Fly: true}},
 		{[]string{"--c"}, Options{C51: true}},
 		{[]string{"-p"}, Options{Patch: true}},
+		{[]string{"-pp", "x"}, Options{Patch: true}},
 	}
 	for _, tt := range tests {
-		if got := ParseArgs(tt.args); got != tt.want {
+		got, err := ParseArgs(tt.args)
+		if err != nil {
+			t.Errorf("ParseArgs(%q) returned error: %v", tt.args, err)
+		} else if got != tt.want {
 			t.Errorf("ParseArgs(%q) = %+v, want %+v", tt.args, got, tt.want)
+		}
+	}
+}
+
+func TestParseArgsPatchExclusive(t *testing.T) {
+	for _, args := range [][]string{
+		{"-pa"},
+		{"-p", "-F"},
+		{"-l", "-p"},
+		{"-cp"},
+		{"-alFcp"},
+	} {
+		if _, err := ParseArgs(args); err == nil {
+			t.Errorf("ParseArgs(%q) should return error", args)
 		}
 	}
 }

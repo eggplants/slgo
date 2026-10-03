@@ -31,7 +31,10 @@ func main() {
 }
 
 func run(args []string) error {
-	opts := sl.ParseArgs(args)
+	opts, err := sl.ParseArgs(args)
+	if err != nil {
+		return err
+	}
 
 	s, err := tcell.NewScreen()
 	if err != nil {

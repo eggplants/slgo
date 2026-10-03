@@ -25,7 +25,8 @@ go install github.com/eggplants/slgo/cmd/sl@latest
 ## Usage
 
 ```sh
-sl [-a] [-F] [-l] [-c] [-p]
+sl [-a] [-F] [-l] [-c]
+sl -p
 ```
 
 | Option | Effect                       |
@@ -34,9 +35,7 @@ sl [-a] [-F] [-l] [-c] [-p]
 | `-F`   | The train flies              |
 | `-l`   | Show a small train (SL logo) |
 | `-c`   | Show C51 instead of D51      |
-| `-p`   | [sl5-1.patch](https://www.izumix.xyz/sl/sl5-1.patch) mode |
-
-Options can be combined, for example `-aF`. As in the original, you cannot stop the train with Ctrl-C.
+| `-p`   | [sl5-1.patch](https://www.izumix.xyz/sl/sl5-1.patch) mode (cannot be combined with other options) |
 
 ## License
 
