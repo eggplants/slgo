@@ -1,5 +1,5 @@
 [tools]
-"aqua:azu/dockerfile-pin" = "latest"
+"aqua:azu/dockerfile-pin" = "latest" # [skip ci]
 claude = "latest" # [skip ci]
 go = "1.27"
 goreleaser = "latest"
