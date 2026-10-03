@@ -27,7 +27,7 @@ func TestAddStrR(t *testing.T) {
 
 func TestBuildRowNumbersCoaches(t *testing.T) {
 	scr := newFakeScreen(80, 24)
-	h := NewPatch(scr, Options{}, PatchConfig{Coaches: 12})
+	h := NewPatch(scr, PatchConfig{Coaches: 12})
 	row := h.rows[0][3]
 	if want := 3*unitWidth + passLength*11 + len(lastCoach[3]); len(row) != want {
 		t.Fatalf("row length = %d, want %d", len(row), want)
@@ -50,20 +50,16 @@ func TestPatchFrames(t *testing.T) {
 
 	tests := []struct {
 		name string
-		opts Options
 		trip bool
 		want int
 	}{
-		{"one way", Options{}, false, gates + forward},
-		{"round trip", Options{Accident: true}, true, gates + forward + reverse},
-		{"fly has no crossing or return", Options{Fly: true, Accident: true}, true, forward},
-		{"logo has no return", Options{Logo: true, Accident: true}, true, gates + cols + logoLength},
-		{"logo fly", Options{Logo: true, Fly: true}, false, cols + logoLength},
+		{"one way", false, gates + forward},
+		{"round trip", true, gates + forward + reverse},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			scr := newFakeScreen(cols, lines)
-			h := NewPatch(scr, tt.opts, PatchConfig{Coaches: coaches, RoundTrip: tt.trip})
+			h := NewPatch(scr, PatchConfig{Coaches: coaches, RoundTrip: tt.trip})
 			frames := 0
 			h.Run(func() { frames++ })
 			if frames != tt.want {
@@ -75,7 +71,7 @@ func TestPatchFrames(t *testing.T) {
 
 func TestPatchCrossing(t *testing.T) {
 	scr := newFakeScreen(100, 30)
-	h := NewPatch(scr, Options{}, PatchConfig{Coaches: 10})
+	h := NewPatch(scr, PatchConfig{Coaches: 10})
 	frames := 0
 	h.Run(func() {
 		frames++

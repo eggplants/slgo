@@ -55,12 +55,12 @@ type PatchTrain struct {
 	ltr       bool // the arrow on the crossing points right
 }
 
-// NewPatch returns a PatchTrain that draws onto scr. opts.C51 is ignored.
-func NewPatch(scr Screen, opts Options, cfg PatchConfig) *PatchTrain {
+// NewPatch returns a PatchTrain that draws onto scr.
+func NewPatch(scr Screen, cfg PatchConfig) *PatchTrain {
 	cfg.Coaches = max(cfg.Coaches, 1)
 	cols, _ := scr.Size()
 	h := &PatchTrain{
-		t:         &Train{canvas: canvas{scr}, opts: opts, patched: true},
+		t:         &Train{canvas: canvas{scr}, patched: true},
 		cfg:       cfg,
 		allLength: 3*patchedD51Length + passLength*(cfg.Coaches-1) + lPassLength,
 		crossX:    3 * cols / 10,
@@ -96,35 +96,19 @@ func (h *PatchTrain) buildRow(pattern, i int) string {
 
 // Run plays the whole animation, calling frame after each frame is drawn.
 func (h *PatchTrain) Run(frame func()) {
-	opts := h.t.opts
-	if !opts.Fly {
-		h.beginGate(frame)
-	}
-	for x := h.t.StartX(); ; x-- {
-		var ok bool
-		if opts.Logo {
-			ok = h.t.addSL(x)
-		} else {
-			ok = h.drawForward(x)
-		}
-		if !ok {
-			break
-		}
-		if !opts.Fly {
-			h.addCross()
-		}
+	h.beginGate(frame)
+	for x := h.t.StartX(); h.drawForward(x); x-- {
+		h.addCross()
 		frame()
 	}
-	if !opts.Fly && !opts.Logo && h.cfg.RoundTrip {
+	if h.cfg.RoundTrip {
 		h.reverseGate(frame)
 		for x := 0; h.drawReverse(x); x++ {
 			h.addCross()
 			frame()
 		}
 	}
-	if !opts.Fly {
-		h.endGate(frame)
-	}
+	h.endGate(frame)
 }
 
 // drawForward mirrors add_D51_coach.
@@ -132,11 +116,8 @@ func (h *PatchTrain) drawForward(x int) bool {
 	if x < -h.allLength+4 {
 		return false
 	}
-	cols, lines := h.t.scr.Size()
+	_, lines := h.t.scr.Size()
 	y := lines/2 - 5
-	if h.t.opts.Fly {
-		y = x/7 + lines - cols/7 - d51Height
-	}
 	rows := &h.rows[(h.allLength+x)%d51Patterns]
 	for i, row := range rows {
 		// The original draws the row from column 0, padded with spaces.
@@ -144,11 +125,6 @@ func (h *PatchTrain) drawForward(x int) bool {
 			h.t.addStr(y+i, 0, strings.Repeat(" ", x))
 		}
 		h.t.addStr(y+i, x, row)
-	}
-	if h.t.opts.Accident {
-		for _, dx := range []int{43, 47, 125, 129, 207, 211} {
-			h.t.addMan(y+2, x+dx)
-		}
 	}
 	h.t.addSmoke(y-1, x+d51Funnel)
 	h.t.addSmoke(y-1, x+d51Funnel+81)
@@ -184,11 +160,6 @@ func (h *PatchTrain) drawReverse(x int) bool {
 			}
 		}
 	}
-	if h.t.opts.Accident {
-		for _, dx := range []int{45, 49, 127, 131, 209, 213} {
-			h.t.addMan(y+2, x-dx)
-		}
-	}
 	for _, dx := range []int{3, 84, 167} {
 		if fx := x - d51Funnel - dx; fx <= 2*cols {
 			h.smokeR.addR(h.t.canvas, y-1, fx)
@@ -199,9 +170,6 @@ func (h *PatchTrain) drawReverse(x int) bool {
 
 func (h *PatchTrain) crossingY() int {
 	_, lines := h.t.scr.Size()
-	if h.t.opts.Logo {
-		return lines/2 - 7
-	}
 	return lines/2 - 5
 }
 

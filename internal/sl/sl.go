@@ -171,7 +171,7 @@ type Train struct {
 	opts  Options
 	smoke smokeTrail
 
-	// patched enables the tweaks sl5-1.patch made to add_man and add_smoke.
+	// patched enables the tweak sl5-1.patch made to add_smoke.
 	patched bool
 }
 
@@ -277,9 +277,6 @@ func (t *Train) addC51(x int) bool {
 }
 
 func (t *Train) addMan(y, x int) {
-	if t.patched && x < 0 {
-		return
-	}
 	for i := 0; i < 2; i++ {
 		t.addStr(y+i, x, man[(logoLength+x)/12%2][i])
 	}

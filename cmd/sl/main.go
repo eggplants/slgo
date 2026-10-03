@@ -62,7 +62,7 @@ func run(args []string) error {
 	scr := tcellScreen{s}
 	if opts.Patch {
 		cfg := sl.RandomPatchConfig()
-		sl.NewPatch(scr, opts, cfg).Run(func() {
+		sl.NewPatch(scr, cfg).Run(func() {
 			s.Show()
 			time.Sleep(cfg.Wait)
 		})
