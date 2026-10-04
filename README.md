@@ -19,6 +19,10 @@ A Go port of [sl](https://github.com/mtoyoda/sl).
 ## Install
 
 ```sh
+# via mise
+mise use -g github:eggplants/slgo
+
+# via go
 go install github.com/eggplants/slgo/cmd/sl@latest
 ```
 
