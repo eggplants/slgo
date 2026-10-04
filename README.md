@@ -16,6 +16,8 @@
 
 A Go port of [sl](https://github.com/mtoyoda/sl).
 
+![demo](demo.gif)
+
 ## Install
 
 ```sh

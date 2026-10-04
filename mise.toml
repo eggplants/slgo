@@ -4,6 +4,7 @@ claude = "latest" # [skip ci]
 go = "1.27"
 goreleaser = "latest"
 pinact = "latest" # [skip ci]
+vhs = "latest"
 
 [tasks.pre-commit]
 depends = ["ci"]
@@ -28,3 +29,10 @@ run = "goreleaser release --snapshot --clean"
 
 [tasks.fmt]
 run = "go fmt ./..."
+
+[tasks.demo]
+run = [
+  "vhs demo.tape",
+  "ffmpeg -v error -y -i demo.gif -filter_complex '[0:v]split[a][b];[a]palettegen=max_colors=4:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle' demo.min.gif",
+  "mv demo.min.gif demo.gif",
+]
